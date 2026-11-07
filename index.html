@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MAKAY | Cardápio</title>
+<meta name="theme-color" content="#0A0A0A">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230A0A0A'/%3E%3Cg fill='%23D9B965'%3E%3Cpolygon points='15,17 24,17 43,46 41,50 36,50'/%3E%3Cpolygon points='40,50 42,46 49,17 51,17'/%3E%3Crect x='47' y='17' width='5' height='33'/%3E%3Crect x='16' y='17' width='2.2' height='33'/%3E%3C/g%3E%3C/svg%3E">
+<style>
+:root{--bg:#0A0A0A;--card:#141414;--line:#2E2819;--gold:#C9A24A;--gold2:#E3C676;--txt:#F4EFE3;--mut:#A39B88}
+*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
+html,body{background:var(--bg);color:var(--txt);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+body{padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);overflow-x:clip}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+.serif{font-family:Georgia,"Times New Roman",serif}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+
+/* Tela de entrada */
+#splash{position:fixed;inset:0;z-index:50;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;text-align:center;padding:24px}
+#splash svg{width:104px;height:104px}
+#splash h1{font-size:34px;letter-spacing:.2em;font-weight:500;padding-left:.2em}
+#splash p{color:var(--mut);font-size:14px;letter-spacing:.14em;text-transform:uppercase}
+.btn{background:linear-gradient(135deg,var(--gold2),var(--gold));color:#1a1205;font-weight:700;padding:15px 30px;border-radius:999px;font-size:16px;margin-top:10px}
+.link{color:var(--mut);font-size:13px;text-decoration:underline;margin-top:2px}
+
+/* Topo e categorias */
+header{position:sticky;top:0;z-index:20;background:rgba(10,10,10,.94);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.top{display:flex;align-items:center;gap:12px;padding:12px 16px}
+.top svg{width:40px;height:40px;flex:none}
+.top h2{font-size:20px;letter-spacing:.18em;font-weight:500;line-height:1}
+.top small{display:block;color:var(--gold2);font-size:10px;letter-spacing:.22em;text-transform:uppercase;margin-top:4px;font-family:system-ui,sans-serif}
+.top .fs{margin-left:auto;border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-size:12px;color:var(--mut)}
+nav{display:flex;gap:8px;overflow-x:auto;padding:0 16px 12px;scrollbar-width:none}
+nav::-webkit-scrollbar{display:none}
+nav button{flex:none;padding:9px 16px;border-radius:999px;border:1px solid var(--line);color:var(--mut);font-size:14px}
+nav button.on{background:var(--gold);color:#1a1205;border-color:var(--gold);font-weight:700}
+
+/* Itens */
+main{max-width:1100px;margin:0 auto;padding:8px 16px 60px}
+section h3{font-size:22px;font-weight:500;margin:26px 0 14px;display:flex;align-items:center;gap:12px;scroll-margin-top:130px}
+section h3::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--gold),transparent);opacity:.5}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+@media(min-width:700px){.grid{grid-template-columns:repeat(3,1fr);gap:18px}}
+@media(min-width:1000px){.grid{grid-template-columns:repeat(4,1fr)}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;text-align:left;display:flex;flex-direction:column}
+.media{position:relative;aspect-ratio:4/5;background:#0d0b08;overflow:hidden}
+.media video,.media svg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.play{position:absolute;right:8px;bottom:8px;width:30px;height:30px;border-radius:50%;background:rgba(0,0,0,.6);border:1px solid var(--gold);display:grid;place-items:center;font-size:11px;color:var(--gold2)}
+.info{padding:12px}
+.info b{display:block;font-size:15px;font-weight:600}
+.info span{display:block;color:var(--mut);font-size:12.5px;margin-top:4px;line-height:1.4}
+.info em{display:block;font-style:normal;color:var(--gold2);font-weight:700;font-size:16px;margin-top:8px}
+
+/* Ilustração animada (aparece enquanto não houver vídeo) */
+.art{background:radial-gradient(circle at 50% 40%,#2a2113,#0d0b08 75%)}
+.art .float{animation:fl 3.6s ease-in-out infinite;transform-origin:center}
+.st{fill:none;stroke:#fff;stroke-width:3;stroke-linecap:round;opacity:0;animation:st 3s ease-in infinite}
+.st:nth-of-type(2){animation-delay:.9s}.st:nth-of-type(3){animation-delay:1.8s}
+@keyframes fl{50%{transform:translateY(-4px)}}
+@keyframes st{0%{opacity:0;transform:translateY(8px)}30%{opacity:.5}100%{opacity:0;transform:translateY(-14px)}}
+@media(prefers-reduced-motion:reduce){.art .float,.st{animation:none}}
+
+/* Detalhe em tela cheia */
+#modal{position:fixed;inset:0;z-index:40;background:rgba(0,0,0,.96);display:none;flex-direction:column;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+#modal.open{display:flex}
+#mMedia{position:relative;flex:1;min-height:0;background:#000}
+#mMedia video,#mMedia svg{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+#mClose{position:absolute;top:12px;right:12px;z-index:2;width:42px;height:42px;border-radius:50%;background:rgba(0,0,0,.65);border:1px solid var(--gold);font-size:20px}
+#mSound{position:absolute;top:12px;left:12px;z-index:2;padding:10px 14px;border-radius:999px;background:rgba(0,0,0,.65);border:1px solid var(--line);font-size:13px}
+#mInfo{padding:16px 18px 20px;background:var(--card);border-top:1px solid var(--line)}
+#mInfo h4{font-size:22px;font-weight:500}
+#mInfo p{color:var(--mut);font-size:14px;margin:6px 0 12px;line-height:1.45}
+#mInfo .row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+#mInfo .price{font-size:24px;color:var(--gold2);font-weight:700}
+footer{text-align:center;color:var(--mut);font-size:12px;padding:10px 16px 30px}
+
+#adm{position:fixed;inset:0;z-index:60;background:var(--bg);overflow-y:auto;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+#adm[hidden]{display:none}
+#adm.pin{display:grid;place-items:center}
+#adm form{display:flex;flex-direction:column;gap:12px;align-items:center;width:min(86vw,320px);text-align:center}
+#adm form b{font-size:22px;font-weight:500}
+#adm small{color:#e58a7e;min-height:1em}
+.ah{position:sticky;top:0;z-index:2;display:flex;align-items:center;gap:8px;padding:12px 16px;background:rgba(10,10,10,.96);border-bottom:1px solid var(--line)}
+.ah .sp{flex:1}
+.b2{border:1px solid var(--gold);color:var(--gold2);border-radius:10px;padding:9px 12px;font-size:13px}
+.ab{max-width:720px;margin:0 auto;padding:16px 16px 80px;display:flex;flex-direction:column;gap:14px}
+.hint{color:var(--mut);font-size:13px;line-height:1.5;border-left:2px solid var(--gold);padding-left:10px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:10px}
+.box label{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--mut)}
+#adm input,#adm textarea,#adm select{width:100%;background:#1E1B17;border:1px solid var(--line);color:var(--txt);border-radius:10px;padding:10px;font:inherit;font-size:16px}
+#adm .cat{font-size:18px;color:var(--gold2)}
+.r{display:flex;gap:8px}
+.it{display:flex;flex-direction:column;gap:8px;padding-top:12px;border-top:1px dashed var(--line)}
+.del{color:#e58a7e;font-size:13px;text-align:left}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F3DC96"/><stop offset=".45" stop-color="#C9A24A"/><stop offset=".75" stop-color="#8F6B24"/><stop offset="1" stop-color="#E3C676"/></linearGradient></defs></svg>
+
+<!-- ============ CONFIGURE AQUI ============ -->
+<script>
+const CONFIG = {
+  nome: "MAKAY",
+  subtitulo: "Cardápio",
+  whatsapp: "5592999999999",          // seu número com 55 + DDD (só números)
+  moeda: "R$"
+};
+/* Cada prato: nome, descricao, preco, video (caminho do arquivo .mp4), arte (burger|pizza|drink|dessert|plate)
+   Coloque seus vídeos na pasta "videos" ao lado deste arquivo. Se o vídeo não existir, aparece a ilustração. */
+let MENU = [
+ {cat:"Hambúrgueres", itens:[
+  {nome:"X-Burger Artesanal", descricao:"Pão brioche, blend 160 g, queijo prato, alface e tomate.", preco:29.90, video:"videos/x-burger.mp4", arte:"burger"},
+  {nome:"X-Bacon", descricao:"Blend 160 g, bacon crocante, cheddar e molho da casa.", preco:34.90, video:"videos/x-bacon.mp4", arte:"burger"}]},
+ {cat:"Pizzas", itens:[
+  {nome:"Margherita", descricao:"Molho de tomate, muçarela, manjericão fresco.", preco:49.90, video:"videos/margherita.mp4", arte:"pizza"},
+  {nome:"Calabresa", descricao:"Calabresa fatiada, cebola e azeitonas.", preco:52.90, video:"videos/calabresa.mp4", arte:"pizza"}]},
+ {cat:"Bebidas", itens:[
+  {nome:"Suco Natural", descricao:"Fruta da estação, 400 ml.", preco:12.00, video:"videos/suco.mp4", arte:"drink"},
+  {nome:"Refrigerante", descricao:"Lata 350 ml, bem gelada.", preco:8.00, video:"videos/refrigerante.mp4", arte:"drink"}]},
+ {cat:"Sobremesas", itens:[
+  {nome:"Brownie com Sorvete", descricao:"Brownie quentinho com bola de sorvete de creme.", preco:19.90, video:"videos/brownie.mp4", arte:"dessert"},
+  {nome:"Pudim", descricao:"Pudim de leite condensado com calda de caramelo.", preco:14.00, video:"videos/pudim.mp4", arte:"dessert"}]}
+];
+</script>
+<!-- ======================================== -->
+
+<div id="splash">
+  <svg viewBox="0 0 64 64" aria-label="MAKAY"><rect width="64" height="64" rx="14" fill="#0A0A0A"/><rect x="2" y="2" width="60" height="60" rx="12" fill="none" stroke="#C9A24A" stroke-opacity=".55"/><g fill="url(#g)"><polygon points="15,17 24,17 43,46 41,50 36,50"/><polygon points="40,50 42,46 49,17 51,17"/><rect x="47" y="17" width="5" height="33"/><rect x="16" y="17" width="2.2" height="33"/><rect x="11" y="16" width="16" height="2"/><rect x="43" y="16" width="14" height="2"/><rect x="11" y="49" width="12" height="2"/><rect x="31" y="49" width="16" height="2"/><rect x="43" y="49" width="14" height="2"/></g></svg>
+  <h1 class="serif" id="sNome"></h1>
+  <p id="sSub"></p>
+  <button class="btn" id="enter">Abrir cardápio em tela cheia</button>
+  <button class="link" id="enterNormal">Abrir sem tela cheia</button>
+</div>
+
+<header>
+  <div class="top">
+    <svg viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#0A0A0A"/><rect x="2" y="2" width="60" height="60" rx="12" fill="none" stroke="#C9A24A" stroke-opacity=".55"/><g fill="url(#g)"><polygon points="15,17 24,17 43,46 41,50 36,50"/><polygon points="40,50 42,46 49,17 51,17"/><rect x="47" y="17" width="5" height="33"/><rect x="16" y="17" width="2.2" height="33"/><rect x="11" y="16" width="16" height="2"/><rect x="43" y="16" width="14" height="2"/><rect x="11" y="49" width="12" height="2"/><rect x="31" y="49" width="16" height="2"/><rect x="43" y="49" width="14" height="2"/></g></svg>
+    <div><h2 class="serif" id="hNome"></h2><small id="hSub"></small></div>
+    <button class="fs" id="fsBtn" aria-label="Tela cheia">⛶ Tela cheia</button>
+  </div>
+  <nav id="nav"></nav>
+</header>
+
+<main id="main"></main>
+<footer id="foot"></footer>
+
+<div id="modal" role="dialog" aria-modal="true">
+  <div id="mMedia">
+    <button id="mClose" aria-label="Fechar">✕</button>
+    <button id="mSound" hidden>🔇 Ligar som</button>
+  </div>
+  <div id="mInfo">
+    <h4 class="serif" id="mNome"></h4>
+    <p id="mDesc"></p>
+    <div class="row"><span class="price" id="mPreco"></span><button class="btn" id="mPedir" style="margin:0;padding:13px 22px">Pedir no WhatsApp</button></div>
+  </div>
+</div>
+
+<div id="adm" hidden></div>
+
+<script>
+const $ = s => document.querySelector(s);
+const brl = v => CONFIG.moeda + " " + v.toFixed(2).replace(".", ",");
+const ART = {
+ burger:'<ellipse cx="100" cy="128" rx="62" ry="9" fill="#000" opacity=".4"/><path d="M45 104h110a8 8 0 0 1-8 14H53a8 8 0 0 1-8-14z" fill="#C98A3B"/><rect x="42" y="93" width="116" height="11" rx="5" fill="#5A3A1E"/><path d="M45 93q9 11 18 0q9 11 18 0q9 11 18 0q9 11 18 0q9 11 18 0v-4H45z" fill="#E3C45A"/><rect x="46" y="83" width="108" height="8" rx="4" fill="#5FA34A"/><path d="M42 83c0-34 116-34 116 0z" fill="#D9973F"/><g fill="#F3DC96"><ellipse cx="80" cy="64" rx="5" ry="2.5"/><ellipse cx="105" cy="58" rx="5" ry="2.5"/><ellipse cx="126" cy="67" rx="5" ry="2.5"/></g>',
+ pizza:'<ellipse cx="100" cy="128" rx="66" ry="9" fill="#000" opacity=".4"/><circle cx="100" cy="82" r="58" fill="#D9973F"/><circle cx="100" cy="82" r="50" fill="#E8B84A"/><g stroke="#C0842F" stroke-width="2"><path d="M100 32v100M50 82h100M64 46l72 72M136 46l-72 72"/></g><g fill="#B5362B"><circle cx="78" cy="62" r="8"/><circle cx="124" cy="68" r="8"/><circle cx="104" cy="100" r="8"/><circle cx="72" cy="98" r="7"/><circle cx="128" cy="102" r="6"/></g><g fill="#5FA34A"><ellipse cx="98" cy="70" rx="5" ry="3"/><ellipse cx="88" cy="88" rx="5" ry="3"/></g>',
+ drink:'<ellipse cx="100" cy="132" rx="40" ry="7" fill="#000" opacity=".4"/><path d="M62 40h76l-9 88H71z" fill="#ffffff" opacity=".12"/><path d="M66 70h68l-5 58H71z" fill="#F08A24"/><path d="M66 70h68l-1 10H67z" fill="#F7B24A"/><rect x="108" y="18" width="7" height="70" rx="3" fill="#C9A24A" transform="rotate(12 110 50)"/><circle cx="84" cy="102" r="6" fill="#fff" opacity=".25"/><circle cx="112" cy="92" r="4" fill="#fff" opacity=".25"/><path d="M62 40h76" stroke="#fff" stroke-opacity=".5" stroke-width="3" stroke-linecap="round"/>',
+ dessert:'<ellipse cx="100" cy="132" rx="62" ry="9" fill="#000" opacity=".4"/><rect x="54" y="88" width="92" height="40" rx="8" fill="#4A2A18"/><rect x="54" y="88" width="92" height="9" rx="4" fill="#6B3C20"/><circle cx="100" cy="66" r="26" fill="#F6E7C1"/><path d="M78 62q22 14 44 0q-4 18-22 18T78 62z" fill="#C98A3B" opacity=".85"/><circle cx="108" cy="58" r="5" fill="#fff" opacity=".35"/><circle cx="104" cy="36" r="5" fill="#B5362B"/>',
+ plate:'<ellipse cx="100" cy="126" rx="70" ry="10" fill="#000" opacity=".4"/><ellipse cx="100" cy="100" rx="64" ry="22" fill="#EDE6D3"/><ellipse cx="100" cy="98" rx="46" ry="14" fill="#fff"/><circle cx="100" cy="82" r="22" fill="#C9A24A"/>'
+};
+function artSvg(tipo){
+  return '<svg class="art" viewBox="0 0 200 150" preserveAspectRatio="xMidYMid slice" aria-hidden="true">' +
+    '<g class="float">' + (ART[tipo] || ART.plate) + '</g>' +
+    '<path class="st" d="M88 40q-6-8 0-16"/><path class="st" d="M100 36q-6-8 0-16"/><path class="st" d="M112 40q-6-8 0-16"/></svg>';
+}
+// Coloca vídeo no lugar; se o arquivo não existir, mantém a ilustração animada
+function mediaInto(el, item, opts){
+  el.insertAdjacentHTML("afterbegin", artSvg(item.arte));
+  if(!item.video) return null;
+  const v = document.createElement("video");
+  v.muted = true; v.loop = true; v.playsInline = true; v.preload = opts.preload || "metadata";
+  v.setAttribute("playsinline",""); v.setAttribute("muted","");
+  v.style.opacity = 0;
+  v.addEventListener("loadeddata", () => { v.style.opacity = 1; v.style.transition = "opacity .4s"; if(opts.autoplay) v.play().catch(()=>{}); });
+  v.addEventListener("error", () => v.remove());
+  v.src = item.video;
+  el.appendChild(v);
+  return v;
+}
+
+// ---------- Dados: menu.json publicado (+ rascunho do dono, só no aparelho dele) ----------
+const DEFAULT_PIN_HASH = "03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4"; // PIN inicial: 1234 (troque no painel do dono)
+const store = {get:k=>{try{return localStorage.getItem(k)}catch(e){return null}}, set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}}, del:k=>{try{localStorage.removeItem(k)}catch(e){}}};
+function applyData(d){ if(!d) return; if(d.config) Object.assign(CONFIG, d.config); if(Array.isArray(d.menu)) MENU = d.menu; }
+async function loadData(){
+  try{
+    const r = await Promise.race([fetch("menu.json",{cache:"no-store"}), new Promise((_,j)=>setTimeout(j,1500))]);
+    if(r.ok) applyData(await r.json());
+  }catch(e){}
+  if(store.get("mk_owner") === "1"){ try{ applyData(JSON.parse(store.get("mk_draft"))); }catch(e){} }
+}
+
+// ---------- Cardápio ----------
+const main = $("#main"), nav = $("#nav");
+let secs = [], vids = [], io = null;
+function render(){
+  $("#sNome").textContent = $("#hNome").textContent = CONFIG.nome;
+  $("#sSub").textContent = $("#hSub").textContent = CONFIG.subtitulo;
+  $("#foot").textContent = CONFIG.nome + " • Toque em um prato para ver o vídeo e pedir";
+  document.title = CONFIG.nome + " | " + CONFIG.subtitulo;
+  main.innerHTML = ""; nav.innerHTML = ""; vids = []; if(io) io.disconnect();
+  MENU.forEach((g, gi) => {
+    const b = document.createElement("button");
+    b.textContent = g.cat; b.onclick = () => document.getElementById("c"+gi).scrollIntoView({behavior:"smooth"});
+    nav.appendChild(b); b.dataset.t = "c"+gi;
+    const sec = document.createElement("section"); sec.id = "c"+gi;
+    sec.innerHTML = '<h3 class="serif"></h3><div class="grid"></div>';
+    sec.querySelector("h3").textContent = g.cat;
+    g.itens.forEach(it => {
+      const c = document.createElement("button"); c.className = "card";
+      c.innerHTML = '<div class="media"></div><div class="info"><b></b><span></span><em></em></div>';
+      c.querySelector("b").textContent = it.nome;
+      c.querySelector("span").textContent = it.descricao;
+      c.querySelector("em").textContent = brl(Number(it.preco) || 0);
+      const m = c.querySelector(".media");
+      const v = mediaInto(m, it, {preload:"metadata"});
+      if(v){ vids.push(v); m.insertAdjacentHTML("beforeend",'<span class="play">▶</span>'); }
+      c.onclick = () => openItem(it);
+      sec.querySelector(".grid").appendChild(c);
+    });
+    main.appendChild(sec);
+  });
+  // Toca só os vídeos visíveis (economiza bateria e dados no celular)
+  if("IntersectionObserver" in window){
+    io = new IntersectionObserver(es => es.forEach(e => {
+      const v = e.target; if(v.readyState < 2) return;
+      e.isIntersecting ? v.play().catch(()=>{}) : v.pause();
+    }), {threshold:.5});
+    vids.forEach(v => v.addEventListener("loadeddata", () => io.observe(v)));
+  }
+  secs = [...document.querySelectorAll("main section")];
+  onScroll();
+}
+function onScroll(){
+  if(!secs.length) return;
+  let cur = secs[0];
+  secs.forEach(s => { if(s.getBoundingClientRect().top < 160) cur = s; });
+  nav.querySelectorAll("button").forEach(b => b.classList.toggle("on", b.dataset.t === cur.id));
+}
+addEventListener("scroll", onScroll, {passive:true});
+
+// Detalhe do prato em tela cheia
+let curItem = null;
+function openItem(it){
+  curItem = it;
+  const box = $("#mMedia");
+  box.querySelectorAll("video,svg.art").forEach(n => n.remove());
+  const v = mediaInto(box, it, {autoplay:true, preload:"auto"});
+  if(v){ v.controls = false; v.muted = true; }
+  $("#mSound").hidden = !v;
+  $("#mSound").textContent = "🔇 Ligar som";
+  $("#mNome").textContent = it.nome;
+  $("#mDesc").textContent = it.descricao;
+  $("#mPreco").textContent = brl(it.preco);
+  $("#modal").classList.add("open");
+  document.body.style.overflow = "hidden";
+}
+function closeItem(){
+  $("#mMedia").querySelectorAll("video").forEach(v => v.pause());
+  $("#modal").classList.remove("open"); document.body.style.overflow = "";
+}
+$("#mClose").onclick = closeItem;
+addEventListener("keydown", e => { if(e.key === "Escape") closeItem(); });
+$("#mSound").onclick = () => {
+  const v = $("#mMedia").querySelector("video"); if(!v) return;
+  v.muted = !v.muted; $("#mSound").textContent = v.muted ? "🔇 Ligar som" : "🔊 Desligar som";
+  v.play().catch(()=>{});
+};
+$("#mPedir").onclick = () => {
+  const txt = "Olá! Gostaria de pedir: " + curItem.nome + " (" + brl(curItem.preco) + ").";
+  open("https://wa.me/" + CONFIG.whatsapp + "?text=" + encodeURIComponent(txt), "_blank");
+};
+
+// Tela cheia
+function goFull(){
+  const el = document.documentElement;
+  const f = el.requestFullscreen || el.webkitRequestFullscreen;
+  if(f) try{ const p = f.call(el); if(p && p.catch) p.catch(()=>{}); }catch(e){}
+}
+function toggleFull(){
+  if(document.fullscreenElement || document.webkitFullscreenElement){
+    (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+  } else goFull();
+}
+$("#enter").onclick = () => { goFull(); $("#splash").remove(); };
+$("#enterNormal").onclick = () => $("#splash").remove();
+$("#fsBtn").onclick = toggleFull;
+if(!(document.documentElement.requestFullscreen || document.documentElement.webkitRequestFullscreen)) $("#fsBtn").hidden = true;
+// Já aberto como app instalado (tela cheia nativa): pula a tela de entrada
+if(matchMedia("(display-mode: standalone)").matches || navigator.standalone) $("#splash").remove();
+
+
+// ---------- Modo dono (invisível para clientes: só abre com o endereço #admin + PIN) ----------
+const adm = $("#adm");
+const sha = async t => [...new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(t)))].map(b => b.toString(16).padStart(2,"0")).join("");
+const esc = x => String(x == null ? "" : x).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const ARTES = {burger:"Hambúrguer", pizza:"Pizza", drink:"Bebida", dessert:"Sobremesa", plate:"Prato"};
+const saveDraft = () => store.set("mk_draft", JSON.stringify({config:CONFIG, menu:MENU}));
+function closeAdm(){
+  adm.hidden = true; adm.innerHTML = "";
+  history.replaceState(null, "", location.pathname + location.search);
+  render();
+}
+function checkAdmin(){
+  if(!location.hash.startsWith("#admin")) return;
+  store.get("mk_owner") === "1" ? openAdmin() : askPin();
+}
+function askPin(){
+  adm.hidden = false; adm.className = "pin";
+  adm.innerHTML = '<form id="pf"><b class="serif">Acesso restrito</b><input id="pv" type="password" inputmode="numeric" autocomplete="off" placeholder="PIN"><button class="btn" style="margin:0">Entrar</button><small id="pe"></small><button type="button" data-a="close" class="link">Cancelar</button></form>';
+  $("#pv").focus();
+  $("#pf").onsubmit = async e => {
+    e.preventDefault();
+    try{
+      if(await sha($("#pv").value) === (CONFIG.pinHash || DEFAULT_PIN_HASH)){ store.set("mk_owner","1"); openAdmin(); }
+      else $("#pe").textContent = "PIN incorreto";
+    }catch(err){ $("#pe").textContent = "Abra o site por https para usar o painel."; }
+  };
+}
+function openAdmin(){ adm.hidden = false; adm.className = ""; drawAdmin(); }
+function drawAdmin(){
+  const y = adm.scrollTop;
+  let h = '<div class="ah"><b class="serif">Painel do dono</b><span class="sp"></span><button class="b2" data-a="dl">⬇ Baixar menu.json</button><button class="b2" data-a="close">Fechar</button></div><div class="ab">';
+  h += '<p class="hint">Suas alterações ficam salvas só neste aparelho (rascunho). Para publicar aos clientes: toque em “Baixar menu.json” e envie esse arquivo para a mesma pasta do site, substituindo o antigo.</p>';
+  h += '<div class="box"><label>Nome<input data-p="config.nome" value="'+esc(CONFIG.nome)+'"></label><label>Subtítulo<input data-p="config.subtitulo" value="'+esc(CONFIG.subtitulo)+'"></label><label>WhatsApp (55 + DDD + número, só números)<input inputmode="numeric" data-p="config.whatsapp" value="'+esc(CONFIG.whatsapp)+'"></label></div>';
+  MENU.forEach((g, gi) => {
+    h += '<div class="box"><div class="r"><input class="cat" data-p="menu.'+gi+'.cat" value="'+esc(g.cat)+'"><button class="b2" data-a="catdel" data-i="'+gi+'" aria-label="Remover categoria">🗑</button></div>';
+    g.itens.forEach((it, ii) => {
+      const k = 'menu.'+gi+'.itens.'+ii+'.';
+      h += '<div class="it"><input data-p="'+k+'nome" placeholder="Nome do prato" value="'+esc(it.nome)+'"><textarea rows="2" data-p="'+k+'descricao" placeholder="Descrição">'+esc(it.descricao)+'</textarea>'
+        + '<div class="r"><input inputmode="decimal" data-n="1" data-p="'+k+'preco" placeholder="Preço" value="'+esc(it.preco)+'"><select data-p="'+k+'arte">'
+        + Object.keys(ARTES).map(a => '<option value="'+a+'"'+(it.arte===a?' selected':'')+'>'+ARTES[a]+'</option>').join('')
+        + '</select></div><input data-p="'+k+'video" placeholder="Vídeo: videos/arquivo.mp4" value="'+esc(it.video)+'"><button class="del" data-a="itdel" data-i="'+gi+'" data-j="'+ii+'">Remover este prato</button></div>';
+    });
+    h += '<button class="b2" data-a="itadd" data-i="'+gi+'">+ Adicionar prato</button></div>';
+  });
+  h += '<button class="b2" data-a="catadd">+ Adicionar categoria</button>';
+  h += '<div class="box"><label>Trocar PIN do painel<input id="newPin" type="password" inputmode="numeric" placeholder="Novo PIN (4 a 8 números)"></label><button class="b2" data-a="pin">Salvar novo PIN</button><button class="del" data-a="reset">Descartar rascunho e voltar ao publicado</button><button class="del" data-a="logout">Sair do modo dono neste aparelho</button></div></div>';
+  adm.innerHTML = h; adm.scrollTop = y;
+}
+adm.addEventListener("input", e => {
+  const t = e.target, p = t.dataset.p; if(!p) return;
+  const k = p.split("."); let o = k[0] === "config" ? CONFIG : MENU;
+  for(let i = 1; i < k.length - 1; i++) o = o[k[i]];
+  let v = t.value;
+  if(t.dataset.n){ v = parseFloat(String(v).replace(",", ".")); if(isNaN(v)) v = 0; }
+  o[k[k.length-1]] = v; saveDraft();
+});
+adm.addEventListener("change", e => { if(e.target.tagName === "SELECT"){ e.target.dispatchEvent(new Event("input",{bubbles:true})); } });
+adm.addEventListener("click", async e => {
+  const b = e.target.closest("[data-a]"); if(!b) return;
+  const a = b.dataset.a, i = +b.dataset.i, j = +b.dataset.j;
+  if(a === "close") return closeAdm();
+  if(a === "dl"){
+    const blob = new Blob([JSON.stringify({config:CONFIG, menu:MENU}, null, 2)], {type:"application/json"});
+    const l = document.createElement("a"); l.href = URL.createObjectURL(blob); l.download = "menu.json"; l.click(); return;
+  }
+  if(a === "catadd") MENU.push({cat:"Nova categoria", itens:[]});
+  if(a === "catdel" && confirm("Remover esta categoria e todos os pratos dela?")) MENU.splice(i,1);
+  if(a === "itadd") MENU[i].itens.push({nome:"Novo prato", descricao:"", preco:0, video:"", arte:"plate"});
+  if(a === "itdel" && confirm("Remover este prato?")) MENU[i].itens.splice(j,1);
+  if(a === "pin"){
+    const n = $("#newPin").value.trim();
+    if(!/^\d{4,8}$/.test(n)) return alert("Use de 4 a 8 números.");
+    CONFIG.pinHash = await sha(n); saveDraft(); $("#newPin").value = "";
+    return alert("PIN salvo no rascunho. Baixe o menu.json e envie ao site para valer para todos os aparelhos.");
+  }
+  if(a === "reset" && confirm("Descartar suas alterações não publicadas?")){ store.del("mk_draft"); location.href = location.pathname; return; }
+  if(a === "logout"){ store.del("mk_owner"); location.href = location.pathname; return; }
+  saveDraft(); drawAdmin();
+});
+
+loadData().then(() => { render(); checkAdmin(); });
+addEventListener("hashchange", checkAdmin);
+</script>
+</body>
+</html>
